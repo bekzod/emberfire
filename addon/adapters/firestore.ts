@@ -12,7 +12,7 @@ import { firestore } from 'firebase/app';
 
 /**
  * Persist your Ember Data models in Cloud Firestore
- * 
+ *
  * ```js
  * // app/adapters/application.js
  * import FirestoreAdapter from 'emberfire/adapters/firestore';
@@ -21,7 +21,7 @@ import { firestore } from 'firebase/app';
  *   // configuration goes here
  * });
  * ```
- * 
+ *
  */
 export default class FirestoreAdapter extends DS.Adapter.extend({
 
@@ -37,7 +37,7 @@ export default class FirestoreAdapter extends DS.Adapter.extend({
 
     /**
      * Enable offline persistence with Cloud Firestore, it is not enabled by default
-     * 
+     *
      * ```js
      * // app/adapters/application.js
      * import FirestoreAdapter from 'emberfire/adapters/firestore';
@@ -46,14 +46,14 @@ export default class FirestoreAdapter extends DS.Adapter.extend({
      *   enablePersistence: true
      * });
      * ```
-     * 
+     *
      */
     // @ts-ignore repeat here for the tyepdocs
     enablePersistence: boolean;
 
     /**
      * Namespace all of the default collections
-     * 
+     *
      * ```js
      * // app/adapters/application.js
      * import FirestoreAdapter from 'emberfire/adapters/firestore';
@@ -62,14 +62,14 @@ export default class FirestoreAdapter extends DS.Adapter.extend({
      *   namespace: 'environments/production'
      * });
      * ```
-     * 
+     *
      */
     // @ts-ignore repeat here for the tyepdocs
     namespace: string|undefined;
 
     /**
      * Override the default configuration of the Cloud Firestore adapter: `{ timestampsInSnapshots: true }`
-     * 
+     *
      * ```js
      * // app/adapters/application.js
      * import FirestoreAdapter from 'emberfire/adapters/firestore';
@@ -78,14 +78,14 @@ export default class FirestoreAdapter extends DS.Adapter.extend({
      *   settings: { timestampsInSnapshots: true }
      * });
      * ```
-     * 
+     *
      */
     // @ts-ignore repeat here for the tyepdocs
     settings: firestore.Settings;
 
     /**
      * Pass persistence settings to Cloud Firestore, enablePersistence has to be true for these to be used
-     * 
+     *
      * ```js
      * // app/adapters/application.js
      * import FirestoreAdapter from 'emberfire/adapters/firestore';
@@ -95,14 +95,14 @@ export default class FirestoreAdapter extends DS.Adapter.extend({
      *   persistenceSettings: { synchronizeTabs: true }
      * });
      * ```
-     * 
+     *
      */
     // @ts-ignore repeat here for the tyepdocs
     persistenceSettings: firestore.PersistenceSettings;
-    
+
     /**
      * Override the default FirebaseApp Service used by the FirestoreAdapter: `service('firebase-app')`
-     * 
+     *
      * ```js
      * // app/adapters/application.js
      * import FirestoreAdapter from 'emberfire/adapters/firestore';
@@ -112,7 +112,7 @@ export default class FirestoreAdapter extends DS.Adapter.extend({
      *   firebaseApp: service('firebase-different-app')
      * });
      * ```
-     * 
+     *
      */
     // @ts-ignore repeat here for the tyepdocs
     firebaseApp: Ember.ComputedProperty<FirebaseAppService, FirebaseAppService>;
@@ -124,7 +124,7 @@ export default class FirestoreAdapter extends DS.Adapter.extend({
     findAll<K extends keyof ModelRegistry>(store: DS.Store, type: ModelRegistry[K]) {
         return this.query(store, type)
     }
-    
+
     findHasMany<K extends keyof ModelRegistry>(store: DS.Store, snapshot: DS.Snapshot<K>, url: string, relationship: {[key:string]: any}) {
         const adapter = store.adapterFor(relationship.type as never) as any; // TODO fix types
         if (adapter !== this) {
@@ -264,10 +264,6 @@ const queryOptionsToQueryFn = (options?:QueryOptions) => (collectionRef:firestor
             const runWhereOp = ([field, op, value]:WhereOp) => ref = ref.where(field, op, value);
             if (isWhereOp(options.where)) { runWhereOp(options.where) } else { options.where.forEach(runWhereOp) }
         }
-        if (options.endAt)      { ref = ref.endAt(options.endAt) }
-        if (options.endBefore)  { ref = ref.endBefore(options.endBefore) }
-        if (options.startAt)    { ref = ref.startAt(options.startAt) }
-        if (options.startAfter) { ref = ref.startAt(options.startAfter) }
         if (options.orderBy) {
             if (typeof options.orderBy === "string") {
                 ref = ref.orderBy(options.orderBy)
@@ -277,6 +273,10 @@ const queryOptionsToQueryFn = (options?:QueryOptions) => (collectionRef:firestor
                 });
             }
         }
+        if (options.endAt)      { ref = ref.endAt(options.endAt) }
+        if (options.endBefore)  { ref = ref.endBefore(options.endBefore) }
+        if (options.startAt)    { ref = ref.startAt(options.startAt) }
+        if (options.startAfter) { ref = ref.startAt(options.startAfter) }
         if (options.limit) { ref = ref.limit(options.limit) }
     }
     return ref;
